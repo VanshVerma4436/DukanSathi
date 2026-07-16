@@ -27,8 +27,10 @@ logger = logging.getLogger(__name__)
 
 try:
     settings.validate()
-except ValueError as exc:
-    logger.warning(f"Configuration warning: {exc}")
+except Exception as exc:
+    # Changed to Exception to catch Pydantic or KeyError validation failures
+    logger.error(f"Configuration validation failed: {exc}")
+    logger.warning("Attempting to proceed anyway, but some services may fail.")
 
 # ---------------------------------------------------------------------------
 # Lifespan context manager (replaces deprecated @app.on_event)
@@ -38,11 +40,14 @@ except ValueError as exc:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application startup and shutdown lifecycle."""
-    logger.info("DukanSathi API starting up…")
+    logger.info("DukanSathi API starting up...")
 
     # Ensure required directories exist
-    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
-    os.makedirs(settings.VECTORSTORE_DIR, exist_ok=True)
+    try:
+        os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+        os.makedirs(settings.VECTORSTORE_DIR, exist_ok=True)
+    except Exception as e:
+        logger.error(f"Failed to create storage directories: {e}")
 
     # Try to restore a previously built FAISS vector store from disk
     logger.info("Skipping FAISS loading at startup.")
@@ -93,10 +98,17 @@ app.include_router(router, prefix="/api")
 if __name__ == "__main__":
     import uvicorn
 
+    # Read port dynamically from environment variable, defaulting to 8000
+    port_env = os.environ.get("PORT", "8000")
+    try:
+        port = int(port_env)
+    except ValueError:
+        port = 8000
+
     uvicorn.run(
         "app.main:app",
         host="0.0.0.0",
-        port=8000,
+        port=port,
         reload=True,
         log_level="info",
     )
