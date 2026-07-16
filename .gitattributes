@@ -1,0 +1,16 @@
+# Normalise line endings to LF in the repository
+* text=auto eol=lf
+
+# Force binary for binary files
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.faiss binary
+*.pkl binary
