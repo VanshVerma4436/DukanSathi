@@ -45,11 +45,7 @@ async def lifespan(app: FastAPI):
     os.makedirs(settings.VECTORSTORE_DIR, exist_ok=True)
 
     # Try to restore a previously built FAISS vector store from disk
-    store = load_vector_store()
-    if store:
-        logger.info("Restored FAISS index from disk.")
-    else:
-        logger.info("No existing FAISS index — waiting for document upload.")
+    logger.info("Skipping FAISS loading at startup.")
 
     yield  # Application runs here
 
