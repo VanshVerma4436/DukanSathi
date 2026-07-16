@@ -34,7 +34,7 @@ def build_vector_store(documents: List[Document]) -> FAISS:
     """
     global _vector_store
 
-    logger.info(f"Building FAISS index from {len(documents)} chunks…")
+    logger.info(f"Building FAISS index from {len(documents)} chunks...")
     embeddings = get_embedding_model()
 
     _vector_store = FAISS.from_documents(documents, embeddings)
@@ -59,7 +59,7 @@ def load_vector_store() -> Optional[FAISS]:
         logger.info("No persisted FAISS index found.")
         return None
 
-    logger.info(f"Loading FAISS index from '{settings.VECTORSTORE_DIR}'…")
+    logger.info(f"Loading FAISS index from '{settings.VECTORSTORE_DIR}'...")
     embeddings = get_embedding_model()
     _vector_store = FAISS.load_local(
         settings.VECTORSTORE_DIR,
@@ -117,16 +117,17 @@ def retrieve_and_answer(question: str) -> Tuple[str, List[SourceDocument]]:
     Raises:
         RuntimeError: If no vector store is loaded.
     """
-store = get_vector_store()
+    # FIXED: Properly indented this entire setup block inside the function body
+    store = get_vector_store()
 
-if store is None:
-    store = load_vector_store()
+    if store is None:
+        store = load_vector_store()
 
-if store is None:
-    raise RuntimeError(
-        "No documents have been uploaded yet. "
-        "Please upload PDFs before asking questions."
-    )
+    if store is None:
+        raise RuntimeError(
+            "No documents have been uploaded yet. "
+            "Please upload PDFs before asking questions."
+        )
 
     # --- 1. Retrieve top-K relevant chunks ---
     logger.info(f"Searching vector store for: '{question}'")
@@ -164,7 +165,7 @@ if store is None:
     context = "\n\n---\n\n".join(context_parts)
 
     # --- 3. Call LLM ---
-    logger.info("Sending query to OpenRouter LLM…")
+    logger.info("Sending query to OpenRouter LLM...")
     llm = _build_llm()
     chain = rag_prompt | llm
 
