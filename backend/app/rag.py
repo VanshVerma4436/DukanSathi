@@ -117,12 +117,16 @@ def retrieve_and_answer(question: str) -> Tuple[str, List[SourceDocument]]:
     Raises:
         RuntimeError: If no vector store is loaded.
     """
-    store = get_vector_store()
-    if store is None:
-        raise RuntimeError(
-            "No documents have been uploaded yet. "
-            "Please upload PDFs before asking questions."
-        )
+store = get_vector_store()
+
+if store is None:
+    store = load_vector_store()
+
+if store is None:
+    raise RuntimeError(
+        "No documents have been uploaded yet. "
+        "Please upload PDFs before asking questions."
+    )
 
     # --- 1. Retrieve top-K relevant chunks ---
     logger.info(f"Searching vector store for: '{question}'")
