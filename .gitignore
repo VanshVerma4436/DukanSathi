@@ -42,11 +42,15 @@ ENV/
 env.bak/
 venv.bak/
 
-# --- Uploaded PDFs & FAISS Index (runtime data, not source code) ---
-backend/uploads/
-backend/vectorstore/
-uploads/
-vectorstore/
+# --- Uploaded PDFs & FAISS Index (runtime data — keep directory structure) ---
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/vectorstore/*
+!backend/vectorstore/.gitkeep
+uploads/*
+!uploads/.gitkeep
+vectorstore/*
+!vectorstore/.gitkeep
 
 # --- HuggingFace model cache ---
 backend/cache/

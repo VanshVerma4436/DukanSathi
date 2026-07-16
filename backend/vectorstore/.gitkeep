@@ -1,0 +1,2 @@
+# This file ensures the vectorstore/ directory is tracked by git.
+# FAISS index files are excluded via .gitignore (they are generated at runtime).
